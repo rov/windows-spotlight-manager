@@ -3,4 +3,6 @@ Tool to save your favorite Windows Spotlight images. Not very nice, no fancy ico
 
 Never tested on other computers!! Please let me know if it works or not, open an issue or reach me here -> samuele dot rove at gmail dot com
 
-(MIT License)
+(Released under MIT License)
+
+![Screenshot](screenshot.png)
