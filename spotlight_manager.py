@@ -29,7 +29,10 @@ from shutil import copy
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QAction, qApp, QMainWindow, QPushButton, QGridLayout, QWidget, QScrollArea, QFileDialog, QMessageBox, QLabel
+from PyQt5.QtWidgets import (QApplication, QAction, qApp,
+                            QMainWindow, QPushButton, QGridLayout,
+                            QWidget, QScrollArea, QFileDialog,
+                            QMessageBox, QLabel)
 from PyQt5.QtGui import QIcon
 
 
