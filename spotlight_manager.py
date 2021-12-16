@@ -8,16 +8,20 @@ import os
 
 # Initialize
 
-path = "%LocalAppData%\\Packages\\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\\LocalState\\Assets"
+PATH = "%LocalAppData%\\Packages\\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\\LocalState\\Assets"
 
-os.system("cd " + path + " & rename * *.jpg")
+EXPANDED_PATH = os.path.expandvars(PATH)
 
-path = "%LocalAppData%\\Packages\\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\\LocalState\\Assets"
+os.system("cd " + PATH + " & rename * *.jpg")
 
 images = []
 
-for file in os.listdir(os.path.expandvars(path)):
-	images.append(os.path.expandvars(path) + "\\" + file)
+for file in os.listdir(EXPANDED_PATH):
+
+	filepath = EXPANDED_PATH + "\\" + file
+
+	if filepath.endswith(".jpg"):
+		images.append(filepath)
 
 
 import sys
@@ -25,7 +29,7 @@ from shutil import copy
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QAction, qApp, QMainWindow, QPushButton, QGridLayout, QWidget, QScrollArea, QFileDialog
+from PyQt5.QtWidgets import QApplication, QAction, qApp, QMainWindow, QPushButton, QGridLayout, QWidget, QScrollArea, QFileDialog, QMessageBox, QLabel
 from PyQt5.QtGui import QIcon
 
 
@@ -37,24 +41,7 @@ class MainWindow(QMainWindow):
 
 		self.setWindowTitle("Spotlight Manager")
 
-		self.buttons = []
-
-		for image in images:
-
-			if image[-4:] == ".jpg":
-
-				button = QPushButton()
-				button.setFlat(True)
-				button.setCheckable(True)
-
-				button.setIcon(QIcon(image))
-				button.setIconSize(QtCore.QSize(200, 360))
-				button.setStyleSheet("padding: 10px; height: 100%")
-
-				self.buttons.append( { 'btn_obj' : button, 'img' : image } )
-
-
-		# Quick guide (:
+		# Quick reference (:
 		#    scroll -> ---------------------------+
 		#     widget -> ----------------------+  ^|
 		#      toolbar -> [_________________] |  ║|
@@ -96,6 +83,12 @@ class MainWindow(QMainWindow):
 		invertSelectionAct.setToolTip("CTRL + I")
 		invertSelectionAct.triggered.connect(self.invert_selection)
 
+		# Invert selection
+		openFolderAct = QAction('Open folder', self)
+		openFolderAct.setShortcut('Ctrl+F')
+		openFolderAct.setToolTip("CTRL + F")
+		openFolderAct.triggered.connect(self.open_folder)
+
 		# --- Toolbar ---
 		toolbar = self.addToolBar('Toolbar (:')
 		toolbar.setMovable(False)
@@ -104,9 +97,31 @@ class MainWindow(QMainWindow):
 		toolbar.addAction(selectAllAct)
 		toolbar.addAction(deSelectAllAct)
 		toolbar.addAction(invertSelectionAct)
+		toolbar.addAction(openFolderAct)
 
-		row = 0
-		col = 0
+		if not len(images):
+			saveAct.setEnabled(False)
+			selectAllAct.setEnabled(False)
+			deSelectAllAct.setEnabled(False)
+			invertSelectionAct.setEnabled(False)
+
+		# --- Displaying everything ---
+
+		self.buttons = []
+
+		for image in images:
+
+			button = QPushButton()
+			button.setFlat(True)
+			button.setCheckable(True)
+
+			button.setIcon(QIcon(image))
+			button.setIconSize(QtCore.QSize(200, 360))
+			button.setStyleSheet("padding: 10px; height: 100%")
+
+			self.buttons.append( { 'btn_obj' : button, 'img' : image } )
+
+		col, row = 0, 0
 
 		for element in self.buttons:
 
@@ -135,7 +150,6 @@ class MainWindow(QMainWindow):
 				if element['btn_obj'].isChecked() is True:
 					copy(element['img'], dest_folder)
 
-
 	def select_all(self):
 		[ element['btn_obj'].setChecked(True) for element in self.buttons ]
 
@@ -150,6 +164,9 @@ class MainWindow(QMainWindow):
 				element['btn_obj'].setChecked(True)
 			else:
 				element['btn_obj'].setChecked(False)
+
+	def open_folder(self):
+		os.startfile(EXPANDED_PATH)
 			
 
 app = QApplication(sys.argv)
