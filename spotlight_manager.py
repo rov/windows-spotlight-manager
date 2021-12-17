@@ -86,7 +86,7 @@ class MainWindow(QMainWindow):
 		invertSelectionAct.setToolTip("CTRL + I")
 		invertSelectionAct.triggered.connect(self.invert_selection)
 
-		# Invert selection
+		# Open folder
 		openFolderAct = QAction('Open folder', self)
 		openFolderAct.setShortcut('Ctrl+F')
 		openFolderAct.setToolTip("CTRL + F")
